@@ -1,9 +1,9 @@
 import { TextField } from '@material-ui/core';
-import React from 'react'
+
 
 export default function Input(props) {
 
-    const {name, label, value, onChange} = props;
+    const {name, label, value, onChange, type} = props;
 
     return (
         <TextField
@@ -13,6 +13,9 @@ export default function Input(props) {
                    value={value}
                    onChange = {onChange}
                    required
+                   type={type}
+                   disabled={props.disabled}
+                   readOnly={props.readOnly}             
                    />
     )
 }

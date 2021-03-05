@@ -20,6 +20,7 @@ export default function DatePicker(props) {
                 format="MM/dd/yyyy"
                 name={name}
                 value={value}
+                disabled={props.disabled}
                 onChange={date => onChange(convertToDefEventParameter(name, date))}
            />
        </MuiPickersUtilsProvider>

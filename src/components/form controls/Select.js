@@ -14,6 +14,8 @@ export default function Select(props) {
             name={name}
             value={value}
             onChange={onChange}
+            disabled={props.disabled}
+            
             >
                 <MenuItem value={value}>{value}</MenuItem>
             {

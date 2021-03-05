@@ -4,11 +4,11 @@ import {makeStyles} from '@material-ui/core';
 
 export  function useForm(initialFieldValues) {
 
-    //Initialize useEffect
+    
     const [values, setValues] = useState(initialFieldValues);
 
     
-    //Using synthetic event handler
+    //Using event handler to change input text
     const handleInputChange = e=>{
         const {name, value} = e.target
         setValues({
@@ -16,11 +16,41 @@ export  function useForm(initialFieldValues) {
             [name]:value
         })
     }
+    //Reset the forms
+    const resetForms = () => {
+        setEditMode(!editMode)
+        setValues(initialFieldValues);
+    }
 
+
+    //Change State
+    const [editMode, setEditMode] = useState(false);
+
+    const changeState = () => {setEditMode(!editMode)}
+
+    //Change Dialog State
+
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+    setOpen(true);
+    setEditMode(!editMode)
+    }; 
+  
+     const handleClose = () => {
+    setOpen(false);
+     };
+    
     return {
         values,
         setValues,
-        handleInputChange
+        handleInputChange,
+        editMode,
+        changeState,
+        resetForms,
+        open,
+        handleClickOpen,
+        handleClose
     }
         
     
@@ -43,7 +73,19 @@ export  function useForm(initialFieldValues) {
         },
         '& .MuiAvatar-root': {
             margin:theme.spacing(2)
-        },   
+        },
+        '& .MuiInputBase-root': {
+            color: 'rgba(0, 0, 0, 0.87)',
+            fontWeight: '300'
+        },
+        '& .MuiSvgIcon-root': {
+            verticalAlign: 'middle',
+            width: '1.2em',
+            height: '1.2em',
+            marginRight: theme.spacing(1)
+
+        }
+
 
         
     }

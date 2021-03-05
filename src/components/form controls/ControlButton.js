@@ -15,17 +15,17 @@ const useStyles = makeStyles(theme => ({
 
 export default function ControlButton(props) {
 
-    const { text, size, color, variant, onClick, ...other} = props;
+    const { text, size, color, variant, onClick} = props;
     const classes = useStyles();
 
-    return (
-        
+    return ( 
             <Button
             variant={variant}
             size={size}
             color={color}
             onClick={onClick}
             classes={{root:classes.root, label:classes.label}}
+            startIcon={props.startIcon}
             >
                 {text}
             </Button>

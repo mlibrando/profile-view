@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography, Tooltip } from '@material-ui/core';
 import React from 'react';
 import {useForm, Form} from '../components/useForm';
 import ControlButton from '../components/form controls/ControlButton'
@@ -8,6 +8,14 @@ import * as employeeService from '../services/employeeService';
 import DatePicker from '../components/form controls/DatePicker';
 import ProfileImage from '../components/ProfileImage';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
+import RecentActorsIcon from '@material-ui/icons/RecentActors';
+import WorkIcon from '@material-ui/icons/Work';
+import InfoIcon from '@material-ui/icons/Info';
+import ContactPhoneIcon from '@material-ui/icons/ContactPhone';
+import HomeIcon from '@material-ui/icons/Home';
+import FormatQuoteIcon from '@material-ui/icons/FormatQuote';
+import EditIcon from '@material-ui/icons/Edit';
+import Popup from '../components/form controls/Popup';
 
 
 //Set default values for fields
@@ -37,15 +45,24 @@ const initialFieldValues = {
 
 
 
+
 export default function EmployeeForm() {
    
 //Calling useState function
    const{
         values,
-        setValues,
-        handleInputChange
+        handleInputChange,
+        changeState,
+        editMode,
+        resetForms,
+        open,
+        handleClickOpen,
+        handleClose
     } = useForm(initialFieldValues);
+
     
+
+
    const fullName = 
                     <Typography variant="h4">
                         {values.firstName} {values.middleName} {values.lastName}
@@ -57,11 +74,12 @@ export default function EmployeeForm() {
    
    const completeAddress = <Typography>
                         {values.addressLine} {values.barangay}, {values.city}, {values.province}, {values.country}
-                </Typography>
+                </Typography>           
+ 
+
 
     return (
     <>
-
         <Form>
         <Grid 
         justify="space-between" 
@@ -69,27 +87,45 @@ export default function EmployeeForm() {
         
         alignItems="center"
         >
-            <Grid item xs={6}>
-                <Typography variant="h6">
-                    <PersonOutlineIcon />
-                    Profile Information
-                </Typography>
-
+            <Grid container item xs={4}>
+            
+            <Typography variant="h6">
+            <PersonOutlineIcon />
+            Profile Information
+            </Typography>               
+                          
             </Grid>
+            <Grid item xs={4}></Grid>
+           
+              
+        <div>      
+            <Grid item xs={4}>        
+                {!editMode ?
+              <Tooltip title="Edit">    
+                    <ControlButton
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    text="Edit"
+                    onClick={changeState}
+                    startIcon={<EditIcon />}
+                    />
+                    </Tooltip> 
+               : <div></div> }   
+            </Grid>     
+         </div>
+          
 
-            <Grid item xs={6}>
-                
-
-            </Grid>
 
         </Grid>
         <Grid container>
             <Grid item xs={3}>
-                <ProfileImage />
+                <ProfileImage 
+                type="file"/>
 
             </Grid>
 
-            <Grid item xs={9}>
+            <Grid container item xs={9}>
                 
                 {fullName}
                 {status}
@@ -100,12 +136,10 @@ export default function EmployeeForm() {
             
 
         </Grid>
-        </Form> 
-        
-        
-            <Form>               
+                                    
                 <Grid>
                 <Typography variant="h6">
+                <RecentActorsIcon />
                 Full Name
                 </Typography>
                     <Grid item>
@@ -115,6 +149,8 @@ export default function EmployeeForm() {
                     name={"firstName"}
                     value={values.firstName}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
 
                     <Input
@@ -122,6 +158,8 @@ export default function EmployeeForm() {
                     name={"middleName"}
                     value={values.middleName}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
 
                     <Input                   
@@ -129,32 +167,36 @@ export default function EmployeeForm() {
                     name="lastName"
                     value={values.lastName}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
                         
                     </Grid>
                 </Grid>
-            </Form>
-
         
-        <Form>
-            <Grid>
-                <Typography variant="h6">
-                Headline
-                </Typography>
-                <Grid item>
-                    <Input 
-                    label={"Say Something About Yourself"}
-                    name={"headLine"}
-                    value={values.headLine}
-                    onChange = {handleInputChange}
-                    />
-                </Grid>
-
+        {editMode?     
+        <Grid>
+            <Typography variant="h6">
+                <FormatQuoteIcon />
+            Headline
+            </Typography>
+            <Grid item>
+                <Input 
+                label={"Say Something About Yourself"}
+                name={"headLine"}
+                value={values.headLine}
+                onChange = {handleInputChange}
+                disabled = {!editMode}
+                readOnly = {!editMode}
+                />
             </Grid>
-        </Form>
 
-        <Form>
+        </Grid>        
+        :<div>
+        </div>}
+
         <Typography variant="h6">
+            <WorkIcon />
                 Employment
                 </Typography>
             <Grid container>
@@ -166,6 +208,8 @@ export default function EmployeeForm() {
                 value={values.employmentStatus}
                 onChange = {handleInputChange}
                 options={employeeService.getEmploymentStatusCollection()}
+                disabled = {!editMode}
+                readOnly = {!editMode}
                 />
 
                 </Grid>
@@ -176,13 +220,12 @@ export default function EmployeeForm() {
                         label={"Date Started"}
                         value={values.hireDate}
                         onChange = {handleInputChange}
+                        disabled = {!editMode}
+                        readOnly = {!editMode}
                         />
                 </Grid>
             </Grid>
-        </Form>
 
-
-        <Form>
         <Grid>
             <Select
             name={"role"}
@@ -190,13 +233,14 @@ export default function EmployeeForm() {
             value={values.role}
             onChange = {handleInputChange}
             options={employeeService.getRoleCollection()}
+            disabled = {!editMode}
+            readOnly = {!editMode}
             
             />
         </Grid>
-        </Form>
-
-        <Form>
+            
         <Typography variant="h6">
+        <InfoIcon />
                     Other Info
                 </Typography>
             <Grid container>
@@ -208,6 +252,8 @@ export default function EmployeeForm() {
                     label={"Birth Date"}
                     value={values.birthDate}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
 
                 </Grid>
@@ -219,21 +265,28 @@ export default function EmployeeForm() {
                     value={values.bloodType}
                     onChange = {handleInputChange}
                     options={employeeService.getBloodTypesCollection()}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                  />   
                  </Grid>   
             </Grid>
-        </Form>
-        
-        <Form>
+               
+            <Typography variant="h6">
+            <ContactPhoneIcon />
+                    Contact Info
+                </Typography>
             <Grid container>
-                
-
+            
+            
                 <Grid item xs={6}>
+                    
                     <Input
                     name={"contactNumber"}
                     label={"Contact Number"}
                     value={values.contactNumber}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
 
                 </Grid>
@@ -244,13 +297,16 @@ export default function EmployeeForm() {
                     label={"Email Address"}
                     value={values.emailAddress}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                  />   
                  </Grid>   
             </Grid>
-        </Form>
+        
 
-        <Form>
+        
         <Typography variant="h6">
+            <ContactPhoneIcon />
                     Emergency Contact
                 </Typography>
 
@@ -260,6 +316,8 @@ export default function EmployeeForm() {
                     label={"Contact Person"}
                     value={values.emergencyContact}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
             </Grid>   
             <Grid container>
@@ -269,6 +327,8 @@ export default function EmployeeForm() {
                     label={"Relationship"}
                     value={values.relationship}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
                 </Grid>
                 <Grid item xs={6}>
@@ -277,13 +337,14 @@ export default function EmployeeForm() {
                     label={"Contact Number"}
                     value={values.emergencyContactNumber}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                  />   
                  </Grid>   
             </Grid>
-        </Form>
-
-        <Form>
+            
             <Typography variant="h6">
+            <HomeIcon />
                 Home Address
             </Typography>
             <Grid container>
@@ -292,6 +353,8 @@ export default function EmployeeForm() {
                     label={"Address Line"}
                     value={values.addressLine}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
             </Grid>
             <Grid container>
@@ -300,6 +363,8 @@ export default function EmployeeForm() {
                     label={"Barangay"}
                     value={values.barangay}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
             </Grid>
             <Grid>
@@ -308,6 +373,8 @@ export default function EmployeeForm() {
                     label={"City"}
                     value={values.city}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
             </Grid>
             <Grid>
@@ -316,6 +383,8 @@ export default function EmployeeForm() {
                     label={"Province"}
                     value={values.province}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
             </Grid>
             <Grid>
@@ -324,35 +393,47 @@ export default function EmployeeForm() {
                     label={"Country"}
                     value={values.country}
                     onChange = {handleInputChange}
+                    disabled = {!editMode}
+                    readOnly = {!editMode}
                     />
             </Grid>
-        </Form>
+        
+    {editMode ?
+   
+   <Grid container >
+       <Grid item xs={4}></Grid>
 
-       <Form> 
-        <Grid container >
-            <Grid item xs={4}></Grid>
+       <Grid item xs={4}>           
+       <ControlButton
+       variant="contained"
+       color="default"
+       size="large"
+       text="Cancel"
+       onClick={resetForms}
+       />
+       <ControlButton
+       variant="contained"
+       color="primary"
+       size="large"
+       text="Save"
+       onClick={handleClickOpen}       
+       /> 
+       </Grid>
 
-            <Grid item xs={4}>           
-            <ControlButton
-            variant="contained"
-            color="default"
-            size="large"
-            text="Cancel"
-            />
-            <ControlButton
-            variant="contained"
-            color="primary"
-            size="large"
-            text="Save"          
-            />
-            </Grid>
-
-            <Grid item xs={4}></Grid>
-            
+       <Grid item xs={4}></Grid>
+       
         </Grid>
-        </Form> 
-
-          
+    
+        :<div>
+        </div>
+         }               
+        
+        <Popup
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+       />
+    </Form>      
      </>  
     )
 }
